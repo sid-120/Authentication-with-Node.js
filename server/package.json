@@ -1,0 +1,27 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "This project is about authentication system ",
+  "keywords": [
+    "MERN",
+    "Authentication",
+    "JWT",
+    "auth"
+  ],
+  "homepage": "https://github.com/sid-120/Authentication-with-Node.js#readme",
+  "bugs": {
+    "url": "https://github.com/sid-120/Authentication-with-Node.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sid-120/Authentication-with-Node.js.git"
+  },
+  "license": "ISC",
+  "author": "siddharth <siddharthuzumaki2000@gmail.com>",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js"
+  }
+}
