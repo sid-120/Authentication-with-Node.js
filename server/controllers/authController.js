@@ -186,13 +186,13 @@ export const sendResetOtp = async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
-    return res.json({ seccuss: false, message: "Email required" });
+    return res.json({ success: false, message: "Email required" });
   }
 
   try {
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.json({ seccuss: false, message: "User not found" });
+      return res.json({ success: false, message: "User not found" });
     }
 
     // Generating 6 digit random number for OTP
@@ -211,6 +211,45 @@ export const sendResetOtp = async (req, res) => {
     await transporter.sendMail(mailOption);
     res.json({ seccuss: true, message: "OTP sent to your Email" });
   } catch (error) {
-    return res.json({ seccuss: false, message: error.message });
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+// Reset  User Password
+export const resetPassword = async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+  if (!email || !otp || !newPassword) {
+    return res.json({
+      success: false,
+      message: "Email, OTP, and new password are required",
+    });
+  }
+
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+    if (user.resetOtp === "" || user.resetOtp !== otp) {
+      return res.json({ success: false, message: "Invalid OTP" });
+    }
+
+    if (user.resetOtpExpireAt < Date.now()) {
+      return res.json({ success: false, message: "OTP expired" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.resetOtp = "";
+    user.resetOtpExpireAt = 0;
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Password has been reset successfully",
+    });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
   }
 };
